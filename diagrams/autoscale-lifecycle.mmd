@@ -1,0 +1,21 @@
+flowchart TB
+    subgraph Config["Configured once by Studio"]
+        direction LR
+        P["Server pool"]
+        AS["Autoscale config<br/>min · max · schedule"]
+        VP["VM provider<br/>template · sizing · network"]
+        WS["Workspace"]
+        P --- AS --- VP
+        P --- WS
+    end
+
+    AS ==>|"demand rises"| CREATE["Kasm creates a VM<br/>from your template"]
+    CREATE --> BOOT["VM boots · startup script runs"]
+    BOOT --> ENROL["Desktop Service enrols<br/>and joins the pool"]
+    ENROL --> READY(["Available for sessions"])
+    READY ==>|"demand falls"| DESTROY["VM destroyed"]
+
+    classDef cfg fill:#f1f3f5,stroke:#adb5bd,color:#212529;
+    classDef run fill:#0b7285,stroke:#08505c,color:#ffffff;
+    class P,AS,VP,WS cfg;
+    class CREATE,BOOT,ENROL,READY,DESTROY run;

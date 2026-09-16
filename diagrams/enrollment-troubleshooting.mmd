@@ -1,0 +1,12 @@
+flowchart TD
+    A{"Does the VM boot<br/>from your template?"} -->|No| A1["Provider config:<br/>template, network, sizing"]
+    A -->|Yes| B{"Did the startup<br/>script run?"}
+    B -->|No| B1["Guest tools missing, or<br/>PowerShell execution policy"]
+    B -->|Yes| C{"Can the VM reach<br/>Kasm on 443?"}
+    C -->|No| C1["Egress / firewall<br/>from the VM subnet"]
+    C -->|Yes| D{"Can Kasm reach<br/>the VM on 4902?"}
+    D -->|No| D1["Inbound 4902/tcp required for<br/>dynamic accounts + session scripts"]
+    D -->|Yes| E["Check the enrollment token:<br/>expired, disabled, or uses exhausted"]
+
+    classDef f fill:#c92a2a,stroke:#862121,color:#ffffff;
+    class A1,B1,C1,D1,E f;

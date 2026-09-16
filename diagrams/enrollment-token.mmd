@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant A as Admin
+    participant S as Studio
+    participant K as Kasm
+    participant V as Windows VM
+
+    A->>S: Request enrollment token for a pool
+    S->>K: Create token scoped to pool + zone
+    K-->>S: Token
+    S-->>A: Token (copy into your VM build)
+
+    Note over V: Machine builds from your template
+    V->>K: Enrol using the token
+    K-->>V: Accepted — joined the pool
+    Note over K: No per-server round-trip,<br/>no manual pool assignment

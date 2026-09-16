@@ -1,0 +1,10 @@
+flowchart LR
+    AS["Autoscale config"]
+    AS --> H["On-premises hypervisor<br/><i>business hours</i>"]
+    AS --> C["Public cloud<br/><i>burst / overnight</i>"]
+    H --> POOL["Server pool"]
+    C --> POOL
+    POOL --> WS["Workspace"]
+
+    classDef x fill:#0b7285,stroke:#08505c,color:#ffffff;
+    class AS,H,C,POOL,WS x;

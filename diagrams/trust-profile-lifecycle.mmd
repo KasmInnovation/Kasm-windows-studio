@@ -1,0 +1,12 @@
+flowchart LR
+    U(["User signs in"]) --> M{"Stored profile<br/>for this user?"}
+    M -->|Yes| R["Restore from<br/>profile store"]
+    M -->|No| N["Start from the<br/>template default"]
+    R --> W["Windows session"]
+    N --> W
+    W --> O(["User signs out"])
+    O --> S["Capture profile<br/>to the store"]
+    S -.->|"next session,<br/>any VM"| M
+
+    classDef k fill:#0b7285,stroke:#08505c,color:#ffffff;
+    class R,N,W,S k;

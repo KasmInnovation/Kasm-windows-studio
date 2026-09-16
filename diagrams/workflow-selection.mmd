@@ -1,0 +1,15 @@
+flowchart TD
+    S(["Start"]) --> Q1{"Do the Windows machines<br/>already exist?"}
+    Q1 -->|Yes| FS["<b>Fixed Server</b>"]
+    Q1 -->|No| Q2{"Where should they<br/>be created?"}
+    Q2 -->|"My own hypervisor"| HP["<b>Hypervisor Pool</b>"]
+    Q2 -->|"A public cloud"| CP["<b>Cloud Pool</b>"]
+
+    FS --> N1["Register machines<br/>and assign to a pool"]
+    HP --> N2["Autoscale creates and<br/>destroys VMs on demand"]
+    CP --> N2
+
+    classDef a fill:#0b7285,stroke:#08505c,color:#ffffff;
+    classDef b fill:#495057,stroke:#212529,color:#ffffff;
+    class FS,HP,CP a;
+    class N1,N2 b;
