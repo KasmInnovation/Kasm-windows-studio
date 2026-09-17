@@ -13,6 +13,7 @@ tool.
 | [`autoscale-lifecycle.mmd`](autoscale-lifecycle.mmd) | How a VM is created, enrolled and destroyed | [Workflows](../docs/workflows.md) |
 | [`multi-provider.mmd`](multi-provider.mmd) | One autoscale config across several providers | [Workflows](../docs/workflows.md) |
 | [`enrollment-token.mmd`](enrollment-token.mmd) | Minting a token and enrolling with it | [Workflows](../docs/workflows.md) |
+| [`ad-authentication.mmd`](ad-authentication.mmd) | AD sign-in: service bind, search, user bind, role mapping | [Active Directory](../docs/active-directory.md) |
 | [`trust-profile-lifecycle.mmd`](trust-profile-lifecycle.mmd) | Profile capture and restore across disposable VMs | [Trust Profiles](../docs/trust-profiles.md) |
 | [`enrollment-troubleshooting.mmd`](enrollment-troubleshooting.mmd) | Decision tree for VMs that build but never join | [Troubleshooting](../docs/troubleshooting.md) |
 

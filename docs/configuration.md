@@ -54,6 +54,26 @@ The appliance serves HTTPS directly — there is no bundled reverse proxy. See
 
 ---
 
+## Active Directory
+
+Only relevant once you configure AD sign-in — see [Active Directory](active-directory.md).
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `LDAP_STRICT_MODE` | `true` | With the default, an unreachable directory means AD sign-in is unavailable rather than silently falling back to local passwords. Set `false` to permit a local fallback **on infrastructure failure only** — a rejected password is always final either way. |
+| `LDAP_CA_CERT_FILE` | unset | Path *inside the container* to the CA that signed your domain controller's certificate. Studio verifies the DC certificate and refuses plain `ldap://`, so without this an internal CA will fail with `CERTIFICATE_VERIFY_FAILED`. |
+
+Mount the CA in alongside the variable:
+
+```yaml
+services:
+  appliance:
+    volumes:
+      - ./corp-ca.pem:/etc/kasm-studio/ssl/corp-ca.pem:ro
+```
+
+---
+
 ## Optional
 
 | Variable | Default | Notes |
@@ -96,4 +116,8 @@ TLS_KEY_PATH=/etc/kasm-studio/ssl/key.pem
 # Optional
 IMAGE_TAG=latest
 LOG_LEVEL=INFO
+
+# Active Directory (only if you use AD sign-in)
+LDAP_STRICT_MODE=true
+LDAP_CA_CERT_FILE=/etc/kasm-studio/ssl/corp-ca.pem
 ```

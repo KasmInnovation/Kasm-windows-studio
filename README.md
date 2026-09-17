@@ -49,6 +49,7 @@ Production install: **[docs/installation.md](docs/installation.md)**
 | **Guided pool deployment** | Hand-sequencing pool → autoscale config → VM provider → workspace across four admin screens, in the right order, with the right IDs |
 | **Multi-provider autoscale** | Per-provider consoles and bespoke scripts. One config, several providers, each on its own schedule |
 | **Server enrollment tokens** | The per-server registration round-trip — create server, save, reopen, enable Desktop Service, save again |
+| **AD sign-in with group-mapped roles** | A separate local account per administrator, and no link to your existing AD groups |
 | **Trust Profiles (KTP)** | Manual roaming-profile plumbing so users keep their desktop across disposable VMs |
 | **RDP certificate & trust management** | Hand-built certificate chains and GPO exports for RDP client trust |
 | **Connection profiles** | Per-workspace RDP/Guacamole connection settings maintained by hand |
@@ -108,6 +109,7 @@ running sessions.
 | [Installation](docs/installation.md) | Production install, sizing, TLS, Kasm API permissions, upgrades, backup |
 | [Configuration](docs/configuration.md) | Every environment variable, with defaults |
 | [Deployment workflows](docs/workflows.md) | The three workflows, with sequence diagrams |
+| [Active Directory](docs/active-directory.md) | AD/LDAPS sign-in and mapping AD groups to roles |
 | [Trust Profiles](docs/trust-profiles.md) | Persistent user profiles across disposable VMs |
 | [Troubleshooting](docs/troubleshooting.md) | Symptoms, causes, and how to read the logs |
 | [Business case & outcomes](docs/business-case.md) | Why this exists and what it's measured on |
@@ -143,12 +145,13 @@ running sessions.
 - Server enrollment tokens, Trust Profiles, connection profiles, certificate management
 - Local administrator accounts with role-based permissions and audit logging
 
+- **Active Directory sign-in** over LDAPS, mapping AD groups to appliance roles —
+  see [Active Directory](docs/active-directory.md)
+
 **Not included yet**
 
-- **SSO for administrator login.** SAML and LDAP/AD configuration screens are present and
-  the schema exists, but the authentication providers are not implemented in this
-  preview. Use local accounts. (This is separate from Kasm's own per-session Windows
-  account handling, which does work.)
+- **SAML SSO.** The configuration screen and schema exist, but the SAML assertion
+  handler is not implemented. Use Active Directory or local accounts.
 - **External PostgreSQL.** SQLite is the only database driver shipped in the image.
 - **High availability.** Single-instance only; no clustering or failover.
 

@@ -73,14 +73,14 @@ The setup wizard has five steps:
 | **1. Database** | Keep the default. SQLite is the only driver in the preview image. |
 | **2. Kasm API** | Your Kasm URL and an API key ID + secret. See [permissions](installation.md#kasm-api-permissions). |
 | **3. Admin Account** | The local administrator you'll sign in as. Use a strong password. |
-| **4. Active Directory** | **Leave blank in this preview.** The AD/LDAP provider is not implemented yet — see the note below. |
+| **4. Active Directory** | Optional. Configure now for AD sign-in, or skip and add it later. Requires an **LDAPS** URL — see [Active Directory](active-directory.md). |
 | **5. Finish** | Review and complete. |
 
-> [!WARNING]
-> **Skip the Active Directory step.** The configuration screen saves successfully, but
-> the LDAP authentication provider is not implemented in this Tech Preview. Saving an
-> active AD configuration does not enable AD logins, and administrator sign-in continues
-> to use the local account from step 3. Leave these fields empty to avoid confusion.
+> [!NOTE]
+> **Always create the local administrator in step 3, even if you configure AD.** It is
+> your way back in if the directory is unreachable. By default the appliance fails
+> closed — if AD cannot be reached, nobody signs in, including AD administrators.
+> See [Active Directory](active-directory.md#if-the-directory-is-unreachable).
 
 The appliance verifies the Kasm credential before it lets you finish. If verification
 fails, the most common causes are a missing permission on the API key or the appliance

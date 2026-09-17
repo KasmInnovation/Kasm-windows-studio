@@ -35,6 +35,7 @@ different VM in a different provider and still restore the same profile.
 | **Object storage** (S3-compatible) | Where profiles are kept |
 | **A storage provider configured in Kasm** | How Kasm reaches that bucket |
 | **WinFsp installed in the Windows template** | Kasm's storage mapping uses rclone, which needs the WinFsp driver |
+| **Storage permissions on the Kasm API credential** | Storage Providers, Storage Mappings and File Mappings — plus an admin username/password, since the mapping endpoints reject an API key. See [Installation](installation.md#additional-permissions-for-trust-profiles) |
 
 > [!IMPORTANT]
 > **WinFsp is the prerequisite people miss.** Without it, a server enrols and reports

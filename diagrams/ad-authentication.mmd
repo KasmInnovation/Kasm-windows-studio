@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant A as Administrator
+    participant S as Kasm Windows Studio
+    participant D as Domain controller
+
+    A->>S: username + password
+    S->>D: service-account bind (LDAPS)
+    S->>D: search for the user
+    D-->>S: user DN + memberOf
+    S->>D: bind AS THE USER with their password
+    D-->>S: accepted
+    Note over S: AD groups -> Studio role
+    S-->>A: signed in, role applied

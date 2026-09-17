@@ -54,24 +54,55 @@ Two of these are easy to miss:
 
 ## Kasm API permissions
 
-Create a dedicated API credential in the Kasm admin portal. Grant the minimum set:
+Create a dedicated API credential in the Kasm admin portal. Using a dedicated credential
+rather than a personal admin account keeps Studio's changes distinguishable from a
+human's in Kasm's own audit trail.
 
-| Permission area | Access | Used for |
+Grant these areas. The endpoint column is what Studio actually calls, so you can match
+it against the permission names your Kasm version uses if the labels differ.
+
+| Permission area | Access | Endpoints Studio calls |
 | --- | --- | --- |
-| **Server Pools** | Read, Write | Create and synchronise pools |
-| **Servers** | Read, Write | Register and manage server records |
-| **Workspaces** | Read, Write | Create pool-backed workspaces and control routing |
-| **Autoscale** | Read, Write | Manage autoscale configs and VM providers |
-| **Settings** | Read | Read zones and deployment settings |
+| **Server Pools** | Read, Write | `get/create/update/delete_server_pool` |
+| **Servers** | Read, Write | `get_servers`, `get/create/update/delete_server` |
+| **Server Templates** | Read, Write | `get/create/update/delete_server_template` — enrollment tokens |
+| **Workspaces (Images)** | Read, Write | `get/create/update/delete_image`, `get/add/remove_images_group` |
+| **Autoscale** | Read, Write | `get/create/update/delete_autoscale_config`, `update/delete_vm_provider_config` |
+| **Groups** | Read, Write | `get_groups`, `create_group` — workspace visibility and Trust Profile assignment |
+| **Users** | Read | `get_users` |
+| **Sessions** | Read | `get_kasms` — checked before deleting a workspace in use |
+| **Settings / Zones** | Read | `get_zones`, `get_settings`, `system_info`, `get_ldap_configs` |
 
-Use a dedicated credential rather than a personal admin account — the audit trail in
-Kasm will then distinguish Studio's changes from a human's.
+### Additional permissions for Trust Profiles
 
-> [!NOTE]
-> Some Kasm endpoints accept an API key while others require an administrator session.
-> If you supply only a key, features that depend on session-authenticated endpoints
-> (notably storage mapping management) will not be available. Supply the administrator
-> username and password as well for full functionality.
+Trust Profiles need storage, which is a separate set of permissions people routinely
+miss — the feature then fails in ways that look like something else.
+
+| Permission area | Access | Endpoints Studio calls |
+| --- | --- | --- |
+| **Storage Providers** | Read, Create | `get_storage_providers` |
+| **Storage Mappings** | Read, Create, Update, Delete | `get/create/update/delete_storage_mapping` |
+| **File Mappings** | Read, Create, Update | `get_file_mappings`, `create_file_map`, `update_file_map` — session scripts |
+
+> [!IMPORTANT]
+> **Storage mapping endpoints reject an API key.** Verified against a live deployment:
+> `get_storage_mapping` and `update_storage_mapping` return **401 to an API key** no
+> matter which permissions you grant it, while `get_storage_providers` and the file-map
+> endpoints accept one. Those two require an authenticated **admin session**.
+>
+> So if you configure Studio with an API key **and no administrator username and
+> password**, every storage mapping call fails and Trust Profiles cannot work. Supply
+> the admin username and password in the Kasm API step as well as the key.
+
+### If you skip these
+
+| Missing | Symptom |
+| --- | --- |
+| Storage Providers / Mappings | Trust Profiles configure without error but no profile is ever saved or restored |
+| Admin username + password | As above, with a 401 in the logs that reads like a credential problem |
+| File Mappings | Session scripts never reach the VM; profiles silently do nothing |
+| Groups | The workspace deploys but is visible to nobody |
+| Sessions | Workspace deletion cannot check for active sessions first |
 
 ---
 

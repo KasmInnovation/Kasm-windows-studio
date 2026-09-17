@@ -139,6 +139,40 @@ The mapped drive is absent or empty, and no error appears anywhere.
 
 ---
 
+## Nobody can sign in after configuring Active Directory
+
+Studio **fails closed** by default: if the directory cannot be reached, AD sign-in is
+unavailable rather than quietly falling back to local passwords.
+
+Sign in with the **local administrator account** created during first-run setup — that
+account always works — then fix the directory configuration.
+
+| Message | Cause |
+| --- | --- |
+| `Plain LDAP (ldap://) is disabled` | Use `ldaps://`. |
+| `CERTIFICATE_VERIFY_FAILED` | `LDAP_CA_CERT_FILE` unset, not mounted into the container, or the wrong CA. |
+| Verify fails with the correct CA | The URL hostname must match the DC certificate's subject. Use the DC's name, not its IP. |
+| `Failed to decrypt stored LDAP bind password` | `APPLIANCE_MASTER_KEY` changed since the config was saved. Re-enter the bind password. |
+
+The sign-in page shows the same message for a bad password and an unknown user by
+design. **The audit log has the specific reason** — check there rather than guessing
+from the UI.
+
+Full detail: [Active Directory](active-directory.md#troubleshooting).
+
+---
+
+## An AD user signs in but has the wrong permissions
+
+Their AD groups didn't match any mapping, so they got `readonly`.
+
+Mappings are evaluated in order and **first match wins**, so a user in both your Admins
+and Operators groups gets whichever is listed first. Check the exact DN in the user's
+`memberOf` — both the full DN and the bare group name will match, but a typo in either
+will not.
+
+---
+
 ## Profiles aren't persisting
 
 See [Trust Profiles → Verifying it works](trust-profiles.md#verifying-it-works).

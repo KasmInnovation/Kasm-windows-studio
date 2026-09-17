@@ -67,8 +67,10 @@ learning the API object model first, and that is repeatable across environments.
 **Platform teams** get consistency. The same wizard produces the same object graph
 whether the target is vSphere or Oracle Cloud, so runbooks and troubleshooting transfer.
 
-**Security and compliance** get an audit trail, encrypted credential storage, and
-least-privilege API credentials scoped to Studio rather than shared admin logins.
+**Security and compliance** get an audit trail, encrypted credential storage,
+least-privilege API credentials scoped to Studio rather than shared admin logins, and
+Active Directory sign-in so appliance access follows the same joiners/movers/leavers
+process as everything else.
 
 **End users** get their desktop back. Trust Profiles mean a disposable VM does not mean
 a disposable working environment.
@@ -130,7 +132,7 @@ plans for them.
 | Limitation | Implication |
 | --- | --- |
 | **Tech Preview** | Not covered by a production support SLA. Interfaces may change between builds. Evaluate in non-production. |
-| **No administrator SSO yet** | SAML and LDAP/AD screens exist but the providers are not implemented. Local accounts only in this preview. |
+| **SAML SSO not implemented** | Active Directory sign-in over LDAPS works and maps AD groups to roles. SAML's screen exists but its assertion handler does not. |
 | **Single instance** | No clustering or failover. An outage affects administration, not running user sessions. |
 | **SQLite only** | The preview image ships one database driver. Fine for the supported scale; not a shared-database deployment. |
 | **Depends on Kasm API stability** | Studio drives documented Kasm admin endpoints. Kasm upgrades may require a matching Studio build. |
@@ -147,5 +149,6 @@ infrastructure for a while, not that users are disconnected.
 than a handful of machines, especially across more than one provider, and the
 administrators doing it are Windows people rather than API people.
 
-**Probably not yet if** you need production support today, require SSO for administrator
-login, or have a stable single pool that already works and rarely changes.
+**Probably not yet if** you need production support today, require SAML specifically
+for administrator login, or have a stable single pool that already works and rarely
+changes.
