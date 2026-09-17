@@ -1,0 +1,19 @@
+flowchart LR
+    subgraph Collect["Collecting — nothing created yet"]
+        direction TB
+        S1["Pool identity<br/>name · zone"]
+        S2["Provider<br/>and credentials"]
+        S3["Connection<br/>RDP port · credential type"]
+        S4["Sizing<br/>min/max servers · schedule"]
+        S5["Startup scripts<br/>and service config"]
+        S6["Review"]
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6
+    end
+
+    S6 ==>|"Confirm"| D["Deploy"]
+    D --> K["Objects created in Kasm"]
+
+    classDef c fill:#f8f9fa,stroke:#adb5bd,color:#212529;
+    classDef d fill:#2b8a3e,stroke:#1e602a,color:#ffffff;
+    class S1,S2,S3,S4,S5,S6 c;
+    class D,K d;

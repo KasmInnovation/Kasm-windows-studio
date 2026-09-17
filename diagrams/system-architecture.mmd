@@ -1,0 +1,29 @@
+flowchart LR
+    Admin["Windows admin<br/>(browser)"]
+
+    subgraph Studio["Kasm Windows Studio (this container)"]
+        direction TB
+        UI["Web UI"]
+        API["Control-plane API"]
+        WRK["Task worker<br/>(long-running deploys)"]
+        DB[("Encrypted<br/>credential + state store")]
+        UI --> API
+        API --> WRK
+        API --> DB
+        WRK --> DB
+    end
+
+    KASM["Kasm Workspaces<br/>admin API"]
+    HV["VM providers<br/>vSphere · Nutanix · Proxmox<br/>Harvester · OCI · GCP · Azure"]
+    WIN["Windows VMs<br/>Kasm Desktop Service"]
+
+    Admin --> UI
+    API --> KASM
+    WRK --> HV
+    KASM -. provisions .-> WIN
+    HV  -. creates .-> WIN
+
+    classDef studio fill:#0b7285,stroke:#08505c,color:#ffffff;
+    classDef ext fill:#f1f3f5,stroke:#adb5bd,color:#212529;
+    class UI,API,WRK,DB studio;
+    class KASM,HV,WIN,Admin ext;

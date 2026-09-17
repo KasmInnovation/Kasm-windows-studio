@@ -1,0 +1,67 @@
+# Kasm Windows Studio — Tech Preview
+#
+#   1. Download this file and .env.example (saved as .env)
+#   2. Set APPLIANCE_MASTER_KEY in .env  (openssl rand -base64 32)
+#   3. docker compose up -d
+#
+# Then open https://localhost:8443 and complete the first-run wizard.
+#
+# The init-tls service generates a self-signed certificate into a named volume
+# on first start and hands it to the appliance's uid. Replace it with your own
+# certificate for anything beyond evaluation — see docs/installation.md.
+
+services:
+  # One-shot: generate a self-signed TLS cert if the volume is empty.
+  # The appliance serves HTTPS directly and will not start without one.
+  init-tls:
+    image: alpine:3.20
+    command:
+      - sh
+      - -c
+      - |
+        set -eu
+        if [ ! -f /ssl/cert.pem ] || [ ! -f /ssl/key.pem ]; then
+          apk add --no-cache openssl >/dev/null
+          echo "Generating self-signed certificate for CN=${TLS_COMMON_NAME:-localhost}"
+          openssl req -x509 -newkey rsa:4096 -nodes -days 365 \
+            -keyout /ssl/key.pem -out /ssl/cert.pem \
+            -subj "/CN=${TLS_COMMON_NAME:-localhost}" >/dev/null 2>&1
+        else
+          echo "Certificate already present, leaving it alone."
+        fi
+        # The appliance runs as uid 1000 and must be able to read the key.
+        chown 1000 /ssl/key.pem /ssl/cert.pem
+        chmod 600 /ssl/key.pem
+        chmod 644 /ssl/cert.pem
+    environment:
+      TLS_COMMON_NAME: ${TLS_COMMON_NAME:-localhost}
+    volumes:
+      - ssl-data:/ssl
+
+  appliance:
+    image: ghcr.io/kasminnovation/kasm-windows-studio:${IMAGE_TAG:-latest}
+    ports:
+      - '${APPLIANCE_BIND:-0.0.0.0}:8443:8443'
+    volumes:
+      - kasm-data:/data
+      - ssl-data:/etc/kasm-studio/ssl:ro
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      init-tls:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory ${REDIS_MAXMEMORY:-256mb} --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  kasm-data:   # appliance database and state — back this up
+  redis-data:  # task queue, safe to discard
+  ssl-data:    # TLS certificate and key

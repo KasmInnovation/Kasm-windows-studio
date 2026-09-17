@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant W as Studio
+    participant K as Kasm API
+
+    W->>K: Create server pool
+    K-->>W: server_pool_id
+
+    W->>K: Create autoscale config (uses server_pool_id)
+    K-->>W: autoscale_config_id
+
+    W->>K: Create VM provider config (uses autoscale_config_id)
+    K-->>W: vm_provider_config_id
+
+    W->>K: Attach provider to autoscale config
+    K-->>W: confirmed
+
+    W->>K: Create workspace of type "Server Pool" (uses server_pool_id)
+    K-->>W: workspace_id
+
+    Note over W,K: Studio reads each object back<br/>rather than trusting the write echo
