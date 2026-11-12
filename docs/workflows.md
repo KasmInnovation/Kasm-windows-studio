@@ -7,7 +7,7 @@ and differ in who creates the machines.
 | --- | --- | --- |
 | **Fixed Server** | You, already | You have existing Windows machines — physical, or VMs you manage yourself |
 | **Hypervisor Pool** | Studio, on your hypervisor | vSphere, Nutanix Prism, Proxmox VE or Harvester, scaling on demand |
-| **Cloud Pool** | Studio, in a public cloud | Oracle Cloud, Google Cloud or Azure Virtual Desktop, scaling on demand |
+| **Cloud Pool** | Studio, in a public cloud | Oracle Cloud, Google Cloud or AWS, scaling on demand (Azure: coming soon) |
 
 Choosing between them:
 
@@ -34,27 +34,29 @@ flowchart TD
 ## What the wizard does, in order
 
 Nothing is created in Kasm until the final confirmation. Up to that point the wizard is
-collecting configuration into a draft you can leave and come back to.
+collecting configuration into a draft you can leave and come back to. Fixed Server uses
+only steps 1, 2, 6 and 10.
 
 ```mermaid
 flowchart LR
     subgraph Collect["Collecting — nothing created yet"]
         direction TB
-        S1["Pool identity<br/>name · zone"]
-        S2["Provider<br/>and credentials"]
-        S3["Connection<br/>RDP port · credential type"]
-        S4["Sizing<br/>min/max servers · schedule"]
-        S5["Startup scripts<br/>and service config"]
-        S6["Review"]
-        S1 --> S2 --> S3 --> S4 --> S5 --> S6
+        S1["1 Pool<br/>name · zone · groups"]
+        S2["2 Server / Cloud / Hypervisor<br/>connection"]
+        S3["3–4 Template · Hardware"]
+        S4["5 Connection & AD<br/>credential type and source"]
+        S5["6 RemoteApp<br/>optional · RDP client"]
+        S6["7 Script<br/>enrollment token"]
+        S7["8–9 Scale & Schedule<br/>Profile & Storage"]
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
     end
 
-    S6 ==>|"Confirm"| D["Deploy"]
+    S7 ==>|"Confirm"| D["10 Deploy"]
     D --> K["Objects created in Kasm"]
 
     classDef c fill:#f8f9fa,stroke:#adb5bd,color:#212529;
     classDef d fill:#2b8a3e,stroke:#1e602a,color:#ffffff;
-    class S1,S2,S3,S4,S5,S6 c;
+    class S1,S2,S3,S4,S5,S6,S7 c;
     class D,K d;
 ```
 

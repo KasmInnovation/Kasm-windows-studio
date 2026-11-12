@@ -103,6 +103,14 @@ If the objects genuinely aren't there, the usual causes are:
 **A workspace with no group assigned is the most common "it worked but nobody can see
 it".** Assign a group under Pools → workspace visibility.
 
+From `tp-2026.10.16`, a deploy that fails partway is marked failed with Kasm's own error
+message, and it keeps the IDs of anything it had already created so cleanup can find
+them. Read the failure reason on the pool before retrying.
+
+Creating a Kasm group can fail with **`Priority N is already used by Kasm group '…'`**.
+Kasm requires every group to have a unique priority. The message suggests the next free
+number. Leave the priority blank to use it automatically.
+
 ---
 
 ## Windows VMs build but never join the pool
@@ -125,6 +133,13 @@ flowchart TD
 Port **4902/tcp inbound to the VM from Kasm** is the one people miss. Enrollment can
 succeed without it while dynamic user accounts and session scripts quietly do not work.
 
+**The agent log says `The remote name could not be resolved: 'proxy'`.** Kasm fills the
+startup script's `{upstream_auth_address}` from the zone's Upstream Auth Address, and a
+stock Kasm leaves that at `proxy`, a Docker-internal name no VM can resolve. From
+`tp-2026.10.07`, Studio substitutes the address itself. Set it in **Settings → Kasm API →
+Kasm address for Windows agents** if your VMs reach Kasm on a different address than
+Studio does. Left blank, it uses the host of the Kasm API URL.
+
 ---
 
 ## Storage mappings mount nothing
@@ -144,14 +159,19 @@ The mapped drive is absent or empty, and no error appears anywhere.
 Studio **fails closed** by default: if the directory cannot be reached, AD sign-in is
 unavailable rather than quietly falling back to local passwords.
 
-Sign in with the **local administrator account** created during first-run setup — that
-account always works — then fix the directory configuration.
+Sign in with the **local administrator account** created during first-run setup, then fix
+the directory configuration. Local accounts always sign in with their own password, even
+while AD is enabled.
+
+> **On `tp-2026.10.16` and earlier this is not true.** Enabling AD there stops every local
+> account, the setup administrator included, from signing in. On those versions, upgrade
+> before you enable AD.
 
 | Message | Cause |
 | --- | --- |
 | `Plain LDAP (ldap://) is disabled` | Use `ldaps://`. |
-| `CERTIFICATE_VERIFY_FAILED` | `LDAP_CA_CERT_FILE` unset, not mounted into the container, or the wrong CA. |
-| Verify fails with the correct CA | The URL hostname must match the DC certificate's subject. Use the DC's name, not its IP. |
+| Verify: *Certificate not trusted* | No CA uploaded on the AD page, or the wrong one (or `LDAP_CA_CERT_FILE` not mounted). |
+| Verify: *Certificate name mismatch* | The URL's host isn't in the DC certificate. Use the DC's DNS name, not its IP; Verify lists the names it found. |
 | `Failed to decrypt stored LDAP bind password` | `APPLIANCE_MASTER_KEY` changed since the config was saved. Re-enter the bind password. |
 
 The sign-in page shows the same message for a bad password and an unknown user by
@@ -164,12 +184,17 @@ Full detail: [Active Directory](active-directory.md#troubleshooting).
 
 ## An AD user signs in but has the wrong permissions
 
-Their AD groups didn't match any mapping, so they got `readonly`.
+Their AD groups didn't match any mapping, so they got `readonly`. Or they matched an
+earlier rule than you expected.
 
-Mappings are evaluated in order and **first match wins**, so a user in both your Admins
-and Operators groups gets whichever is listed first. Check the exact DN in the user's
-`memberOf` — both the full DN and the bare group name will match, but a typo in either
-will not.
+Mappings are re-evaluated at every sign-in, in order, and **first match wins**. A user in
+both your Admins and Engineers groups gets whichever is listed first. Enter the user as
+the test user in **Verify LDAP Connection**. It shows their groups, the rule that matched
+and the resulting role. Watch for these:
+
+- A full-DN rule matches only that exact group, in that OU.
+- Nested groups don't count. The user must be a direct member.
+- A role change takes effect at the user's next sign-in.
 
 ---
 

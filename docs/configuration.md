@@ -61,7 +61,7 @@ Only relevant once you configure AD sign-in — see [Active Directory](active-di
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `LDAP_STRICT_MODE` | `true` | With the default, an unreachable directory means AD sign-in is unavailable rather than silently falling back to local passwords. Set `false` to permit a local fallback **on infrastructure failure only** — a rejected password is always final either way. |
-| `LDAP_CA_CERT_FILE` | unset | Path *inside the container* to the CA that signed your domain controller's certificate. Studio verifies the DC certificate and refuses plain `ldap://`, so without this an internal CA will fail with `CERTIFICATE_VERIFY_FAILED`. |
+| `LDAP_CA_CERT_FILE` | unset | Path *inside the container* to the CA that signed your domain controller's certificate. Used only when no CA has been uploaded on the AD settings page. Uploading there is simpler, so prefer it. If this is set and the file is missing, AD sign-in fails with that reason rather than trusting something else. |
 
 Mount the CA in alongside the variable:
 
@@ -81,7 +81,7 @@ services:
 | `IMAGE_TAG` | `latest` | Preview build to run. Pin it for reproducible evaluations. |
 | `LOG_LEVEL` | `INFO` | `DEBUG`, `INFO`, `WARNING` or `ERROR`. |
 | `REDIS_MAXMEMORY` | `256mb` | Redis memory ceiling. |
-| `CELERY_WORKERS` | `2` | Background task worker processes. Raise only if you routinely run many concurrent deploys. |
+| `CELERY_WORKERS` | `2` | **Currently has no effect.** The worker count is fixed at 2 in the image. |
 
 ---
 

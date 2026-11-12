@@ -73,7 +73,7 @@ The setup wizard has five steps:
 | **1. Database** | Keep the default. SQLite is the only driver in the preview image. |
 | **2. Kasm API** | Your Kasm URL and an API key ID + secret. See [permissions](installation.md#kasm-api-permissions). |
 | **3. Admin Account** | The local administrator you'll sign in as. Use a strong password. |
-| **4. Active Directory** | Optional. Configure now for AD sign-in, or skip and add it later. Requires an **LDAPS** URL — see [Active Directory](active-directory.md). |
+| **4. Active Directory** | Optional. Configure now for AD sign-in, or skip and add it later. Requires an **LDAPS** URL and, for an internal CA, the CA certificate — see [Active Directory](active-directory.md). On `tp-2026.10.16` and earlier, skip this step. Saving it fails with *Unauthorized*, and enabling AD on those versions stops local accounts from signing in. |
 | **5. Finish** | Review and complete. |
 
 > [!NOTE]
@@ -97,7 +97,7 @@ flowchart TD
     Q{"How will servers<br/>be created?"}
     Q -->|"I already have<br/>Windows machines"| A["<b>Fixed Server</b><br/>Register existing machines"]
     Q -->|"Build them on my<br/>own hypervisor"| C["<b>Hypervisor Pool</b><br/>vSphere · Nutanix · Proxmox · Harvester"]
-    Q -->|"Build them in<br/>a public cloud"| B["<b>Cloud Pool</b><br/>OCI · GCP · Azure"]
+    Q -->|"Build them in<br/>a public cloud"| B["<b>Cloud Pool</b><br/>OCI · GCP · AWS"]
 
     A --> R["Pool live in Kasm"]
     B --> R

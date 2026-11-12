@@ -10,5 +10,5 @@ sequenceDiagram
     D-->>S: user DN + memberOf
     S->>D: bind AS THE USER with their password
     D-->>S: accepted
-    Note over S: AD groups -> Studio role
+    Note over S: group mappings (first match) -> Studio role
     S-->>A: signed in, role applied

@@ -56,8 +56,9 @@ Production install: **[docs/installation.md](docs/installation.md)**
 | **Audit trail** | No record of who changed which piece of infrastructure, or when |
 
 Supported VM providers in this preview: **VMware vSphere**, **Nutanix Prism**,
-**Proxmox VE**, **Harvester**, **Oracle Cloud Infrastructure**, **Google Cloud**,
-and **Azure Virtual Desktop**.
+**Proxmox VE** (works end to end from `tp-2026.10.07`), **Harvester**, **Oracle Cloud
+Infrastructure**, **Google Cloud** and **AWS**. Azure Virtual Desktop is shown in the wizard
+as *Coming Soon* and can't be selected yet.
 
 ---
 
@@ -80,7 +81,7 @@ flowchart LR
     end
 
     KASM["Kasm Workspaces<br/>admin API"]
-    HV["VM providers<br/>vSphere · Nutanix · Proxmox<br/>Harvester · OCI · GCP · Azure"]
+    HV["VM providers<br/>vSphere · Nutanix · Proxmox<br/>Harvester · OCI · GCP · AWS"]
     WIN["Windows VMs<br/>Kasm Desktop Service"]
 
     Admin --> UI
